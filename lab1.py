@@ -1,27 +1,35 @@
 class Base:
     def __init__(self, point, step):
-        self.point = point
-        self.step = step
+        self.__point = point  # инкапсулированный атрибут
+        self.__step = step    # инкапсулированный атрибут
 
     def calc(self):
         pass
 
+    # методы для доступа к закрытым атрибутам
+    def get_point(self):
+        return self.__point
+
+    def get_step(self):
+        return self.__step
+
 
 class LeftDiff(Base):
     def calc(self, function):
-        result = (function(self.point + self.step) - function(self.point)) / self.step
+        result = (function(self.get_point() + self.get_step()) - function(self.get_point())) / self.get_step()
         return result
 
 
 class RightDiff(Base):
     def calc(self, function):
-        result = (function(self.point) - function(self.point - self.step)) / self.step
+        result = (function(self.get_point()) - function(self.get_point() - self.get_step())) / self.get_step()
         return result
 
 
 class MidDiff(Base):
     def calc(self, function):
-        result = (function(self.point + self.step) - function(self.point - self.step)) / (2 * self.step)
+        result = (function(self.get_point() + self.get_step()) - function(self.get_point() - self.get_step())) / (
+                2 * self.get_step())
         return result
 
 
