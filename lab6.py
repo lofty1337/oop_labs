@@ -1,14 +1,16 @@
-# Базовый класс Control
-class Control:
+from abc import ABC, abstractmethod
+
+# Абстрактный базовый класс контрола
+class Control(ABC):
     def __init__(self):
         self.position = (0, 0)
 
+    @abstractmethod
     def set_position(self, x, y):
         self.position = (x, y)
-        print(f"Вызван метод set_position у контролла {type(self).__name__} с координатами {self.position}")
 
+    @abstractmethod
     def get_position(self):
-        print(f"Вызван метод get_position у контролла {type(self).__name__}")
         return self.position
 
 
@@ -102,75 +104,151 @@ class Button(Control):
 
 
 # Абстрактная фабрика
-class ControlFactory:
-    def create_form(self):
+class ControlFactory(ABC):
+    @abstractmethod
+    def create_form(self) -> Form:
         pass
 
-    def create_label(self):
+    @abstractmethod
+    def create_label(self) -> Label:
         pass
 
-    def create_text_box(self):
+    @abstractmethod
+    def create_text_box(self) -> TextBox:
         pass
 
-    def create_combo_box(self):
+    @abstractmethod
+    def create_combo_box(self) -> ComboBox:
         pass
 
-    def create_button(self):
+    @abstractmethod
+    def create_button(self) -> Button:
         pass
 
 
 # Фабрика для Windows
 class WindowsControlFactory(ControlFactory):
-    def create_form(self):
-        return Form()
+    def create_form(self) -> Form:
+        return WindowsForm()
 
-    def create_label(self):
-        return Label()
+    def create_label(self) -> Label:
+        return WindowsLabel()
 
-    def create_text_box(self):
-        return TextBox()
+    def create_text_box(self) -> TextBox:
+        return WindowsTextBox()
 
-    def create_combo_box(self):
-        return ComboBox()
+    def create_combo_box(self) -> ComboBox:
+        return WindowsComboBox()
 
-    def create_button(self):
-        return Button()
+    def create_button(self) -> Button:
+        return WindowsButton()
 
 
 # Фабрика для Linux
 class LinuxControlFactory(ControlFactory):
-    def create_form(self):
-        return Form()
+    def create_form(self) -> Form:
+        return LinuxForm()
 
-    def create_label(self):
-        return Label()
+    def create_label(self) -> Label:
+        return LinuxLabel()
 
-    def create_text_box(self):
-        return TextBox()
+    def create_text_box(self) -> TextBox:
+        return LinuxTextBox()
 
-    def create_combo_box(self):
-        return ComboBox()
+    def create_combo_box(self) -> ComboBox:
+        return LinuxComboBox()
 
-    def create_button(self):
-        return Button()
+    def create_button(self) -> Button:
+        return LinuxButton()
 
 
 # Фабрика для MacOS
 class MacOSControlFactory(ControlFactory):
-    def create_form(self):
-        return Form()
+    def create_form(self) -> Form:
+        return MacOSForm()
 
-    def create_label(self):
-        return Label()
+    def create_label(self) -> Label:
+        return MacOSLabel()
 
-    def create_text_box(self):
-        return TextBox()
+    def create_text_box(self) -> TextBox:
+        return MacOSTextBox()
 
-    def create_combo_box(self):
-        return ComboBox()
+    def create_combo_box(self) -> ComboBox:
+        return MacOSComboBox()
 
-    def create_button(self):
-        return Button()
+    def create_button(self) -> Button:
+        return MacOSButton()
+
+
+# Специфичные для Windows контролы
+class WindowsForm(Form):
+    def set_position(self, x, y):
+        super().set_position(x, y)
+
+    def get_position(self):
+        return super().get_position()
+
+class WindowsLabel(Label):
+    def set_position(self, x, y):
+        super().set_position(x, y)
+
+    def get_position(self):
+        return super().get_position()
+
+class WindowsTextBox(TextBox):
+    def set_position(self, x, y):
+        super().set_position(x, y)
+
+    def get_position(self):
+        return super().get_position()
+
+class WindowsComboBox(ComboBox):
+    def set_position(self, x, y):
+        super().set_position(x, y)
+
+    def get_position(self):
+        return super().get_position()
+
+class WindowsButton(Button):
+    def set_position(self, x, y):
+        super().set_position(x, y)
+
+    def get_position(self):
+        return super().get_position()
+
+
+# Специфичные для Linux контролы
+class LinuxForm(Form):
+    pass
+
+class LinuxLabel(Label):
+    pass
+
+class LinuxTextBox(TextBox):
+    pass
+
+class LinuxComboBox(ComboBox):
+    pass
+
+class LinuxButton(Button):
+    pass
+
+
+# Специфичные для MacOS контролы
+class MacOSForm(Form):
+    pass
+
+class MacOSLabel(Label):
+    pass
+
+class MacOSTextBox(TextBox):
+    pass
+
+class MacOSComboBox(ComboBox):
+    pass
+
+class MacOSButton(Button):
+    pass
 
 
 # Пример использования
