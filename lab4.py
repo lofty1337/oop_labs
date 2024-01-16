@@ -1,109 +1,82 @@
 import time
 
-# Интерфейс команды
+
+# Класс команды
 class Command:
+    def __init__(self, action, description):
+        self.action = action
+        self.description = description
+
     def execute(self):
         pass
 
     def undo(self):
         pass
 
-# Конкретная команда для действия с клавишей
-class KeyActionCommand(Command):
-    def __init__(self, keyboard, key, action):
-        self.keyboard = keyboard
-        self.key = key
-        self.action = action
-
-    def execute(self):
-        self.keyboard.press_key(self.key, self.action)
-
-    def undo(self):
-        print(f"Undoing key action: {self.key}")
-
-# Конкретная команда для действия с комбинацией клавиш
-class KeyCombinationCommand(Command):
-    def __init__(self, keyboard, combination, action):
-        self.keyboard = keyboard
-        self.combination = combination
-        self.action = action
-
-    def execute(self):
-        self.keyboard.press_key_combination(self.combination, self.action)
-
-    def undo(self):
-        print(f"Undoing key combination action: {self.combination}")
-
-# Команда для ввода текста
-class TypeTextCommand(Command):
-    def __init__(self, keyboard, text):
-        self.keyboard = keyboard
+# Конкретная реализация команды для вывода текста в консоль
+class TextCommand(Command):
+    def __init__(self, text):
+        super().__init__('Print Text', 'Prints text to console')
         self.text = text
 
     def execute(self):
-        for char in self.text:
-            self.keyboard.press_key(char, f'Typed: {char}')
+        print(self.text)
 
     def undo(self):
-        print(f"Undoing text typing: {self.text}")
+        print(f"Undo: {self.text}")
 
-# Команда для стирания текста
-class EraseTextCommand(Command):
-    def __init__(self, keyboard, text):
-        self.keyboard = keyboard
-        self.text = text
-
-    def execute(self):
-        for char in reversed(self.text):
-            self.keyboard.press_key(char, f'Erase: {char}')
-
-    def undo(self):
-        print(f"Undoing text erasing: {self.text}")
-
-# Инвокер (в данном случае, сам класс VirtualKeyboard)
+# Виртуальная клавиатура
 class VirtualKeyboard:
     def __init__(self):
-        self.command_history = []
+        self.key_commands = {}
+        self.workflow = []
 
-    def assign_command(self, command):
-        self.command_history.append(command)
+    def assign_command(self, keys, command):
+        self.key_commands[keys] = command
 
-    def execute_commands(self):
-        for command in self.command_history:
+    def press_key(self, keys):
+        if keys in self.key_commands:
+            command = self.key_commands[keys]
             command.execute()
+            self.workflow.append(command)
+            self.print_workflow()
+            return True
+        else:
+            print(f"No command assigned to keys {keys}")
+            return False
 
-    def undo_last_command(self):
-        if self.command_history:
-            command = self.command_history.pop()
-            command.undo()
+    def undo_last_action(self):
+        if self.workflow:
+            last_command = self.workflow.pop()
+            last_command.undo()
+            self.print_workflow()
 
-    def press_key(self, key, action):
-        print(f"Pressed key '{key}'. Action: {action}")
+    def print_workflow(self):
+        print("Current Workflow:")
+        for command in self.workflow:
+            print(f"- {command.description}")
+        print('\n')
 
-    def press_key_combination(self, combination, action):
-        print(f"Pressed key combination {combination}. Action: {action}")
 
 # Пример использования
 keyboard = VirtualKeyboard()
 
-# Создаем команды
-type_text_command = TypeTextCommand(keyboard, 'Hello')
+# Назначаем команды клавишам
+keyboard.assign_command('A', TextCommand("Hello"))
+keyboard.assign_command('B', TextCommand("World"))
+keyboard.assign_command(('Ctrl', 'C'), TextCommand("Copy"))
+keyboard.assign_command(('Ctrl', 'Z'), TextCommand("Undo"))
 
-erase_text_command = EraseTextCommand(keyboard, 'Hello')
-
-
-# Назначаем команды клавиатуре
-keyboard.assign_command(type_text_command)
-keyboard.assign_command(erase_text_command)
+# Выполняем действия по нажатию клавиш
+keyboard.press_key('A')
+time.sleep(1)  # Задержка между нажатиями
+keyboard.press_key('B')
 time.sleep(1)
 
-# Выполняем команды
-keyboard.execute_commands()
+# Выполняем действия по сочетаниям клавиш
+keyboard.press_key(('Ctrl', 'Z'))
 time.sleep(1)
+keyboard.press_key(('Ctrl', 'C'))
 
-# Отменяем последнюю команду
-keyboard.undo_last_command()
-time.sleep(1)
-
-# Выполняем команды
-keyboard.execute_commands()
+# Откатываем последнюю команду
+keyboard.undo_last_action()
