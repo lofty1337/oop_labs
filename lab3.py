@@ -1,98 +1,182 @@
 class Array3d:
-    def __init__(self, dim0, dim1, dim2, data=None):
-        self.__dim0 = dim0
-        self.__dim1 = dim1
-        self.__dim2 = dim2
-        if data is None:
-            self.__data = [[[0 for _ in range(dim2)] for _ in range(dim1)] for _ in range(dim0)]
-        else:
-            self.__data = data
+    def __init__(self, dim0, dim1, dim2, default_value=0):
+        self.dim0 = dim0
+        self.dim1 = dim1
+        self.dim2 = dim2
+        self.array = [default_value] * (dim0 * dim1 * dim2)
+
+    def get_index(self, i, j, k):
+        return i * (self.dim1 * self.dim2) + j * self.dim2 + k
 
     def __getitem__(self, indices):
         i, j, k = indices
-        return self.__data[i][j][k]
+        return self.array[self.get_index(i, j, k)]
 
     def __setitem__(self, indices, value):
         i, j, k = indices
-        self.__data[i][j][k] = value
+        self.array[self.get_index(i, j, k)] = value
 
-    def __str__(self):
-        return f"Array3d({self.__dim0}, {self.__dim1}, {self.__dim2}, {self.__data})"
+    def print_array(self):
+        for i in range(self.dim0):
+            for j in range(self.dim1):
+                for k in range(self.dim2):
+                    print(self[i, j, k], end=" ")
+                print()
+            print()
+
+    def zeroes(self):
+        self.array = [0] * (self.dim0 * self.dim1 * self.dim2)
+
+    def fill(self, value):
+        self.array = [value] * (self.dim0 * self.dim1 * self.dim2)
+
+    def ones(self):
+        self.array = [1] * (self.dim0 * self.dim1 * self.dim2)
 
     def get_values_0(self, i):
-        return self.__data[i][0][:]
+        if 0 <= i < self.dim0:
+            return [self[i, j, k] for j in range(self.dim1) for k in range(self.dim2)]
+        else:
+            print("wrong index")
 
     def get_values_1(self, j):
-        return [self.__data[i][j][k] for i in range(self.__dim0) for k in range(self.__dim2)]
+        if 0 <= j < self.dim1:
+            return [self[i, j, k] for i in range(self.dim0) for k in range(self.dim2)]
+        else:
+            print("wrong index")
 
     def get_values_2(self, k):
-        return [self.__data[i][j][k] for i in range(self.__dim0) for j in range(self.__dim1)]
+        if 0 <= k < self.dim2:
+            return [self[i, j, k] for i in range(self.dim0) for j in range(self.dim1)]
+        else:
+            print("wrong index")
 
     def get_values_01(self, i, j):
-        return self.__data[i][j][:]
+        if 0 <= i < self.dim0 and 0 <= j < self.dim1:
+            return [self[i, j, k] for k in range(self.dim2)]
+        else:
+            print("wrong index")
 
     def get_values_02(self, i, k):
-        return [self.__data[i][j][k] for j in range(self.__dim1)]
+        if 0 <= i < self.dim0 and 0 <= k < self.dim2:
+            return [self[i, j, k] for j in range(self.dim1)]
+        else:
+            print("wrong index")
 
     def get_values_12(self, j, k):
-        return [self.__data[i][j][k] for i in range(self.__dim0)]
+        if 0 <= j < self.dim1 and 0 <= k < self.dim2:
+            return [self[i, j, k] for i in range(self.dim0)]
+        else:
+            print("wrong index")
 
     def set_values_0(self, i, values):
-        self.__data[i][0] = values
+        if 0 <= i < self.dim0:
+            if len(values) == self.dim1 * self.dim2:
+                count = 0
+                for j in range(self.dim1):
+                    for k in range(self.dim2):
+                        self[i, j, k] = values[count]
+                        count += 1
+            else:
+                print("wrong array size")
+        else:
+            print("wrong index")
 
     def set_values_1(self, j, values):
-        for i in range(self.__dim0):
-            for k in range(self.__dim2):
-                self.__data[i][j][k] = values[j * self.__dim2 + k]
+        if 0 <= j < self.dim1:
+            if len(values) == self.dim0 * self.dim2:
+                count = 0
+                for i in range(self.dim0):
+                    for k in range(self.dim2):
+                        self[i, j, k] = values[count]
+                        count += 1
+            else:
+                print("wrong array size")
+        else:
+            print("wrong index")
 
     def set_values_2(self, k, values):
-        for i in range(self.__dim0):
-            for j in range(self.__dim1):
-                self.__data[i][j][k] = values[j * self.__dim1 + j]
+        if 0 <= k < self.dim2:
+            if len(values) == self.dim0 * self.dim1:
+                count = 0
+                for i in range(self.dim0):
+                    for j in range(self.dim1):
+                        self[i, j, k] = values[count]
+                        count += 1
+            else:
+                print("wrong array size")
+        else:
+            print("wrong index")
 
     def set_values_01(self, i, j, values):
-        self.__data[i][j] = values
+        if 0 <= i < self.dim0 and 0 <= j < self.dim1:
+            if len(values) == self.dim2:
+                count = 0
+                for k in range(self.dim2):
+                    self[i, j, k] = values[count]
+                    count += 1
+            else:
+                print("wrong array size")
+        else:
+            print("wrong index")
 
     def set_values_02(self, i, k, values):
-        for j in range(self.__dim1):
-            self.__data[i][j][k] = values[j]
+        if 0 <= i < self.dim0 and 0 <= k < self.dim2:
+            if len(values) == self.dim1:
+                count = 0
+                for j in range(self.dim1):
+                    self[i, j, k] = values[count]
+                    count += 1
+            else:
+                print("wrong array size")
+        else:
+            print("wrong index")
 
     def set_values_12(self, j, k, values):
-        for i in range(self.__dim0):
-            self.__data[i][j][k] = values[i]
-
-    @classmethod
-    def create_array_with_same_elements(cls, dim0, dim1, dim2, value):
-        return cls(dim0, dim1, dim2, [[[value for _ in range(dim2)] for _ in range(dim1)] for _ in range(dim0)])
-
+        if 0 <= j < self.dim1 and 0 <= k < self.dim2:
+            if len(values) == self.dim0:
+                count = 0
+                for i in range(self.dim0):
+                    self[i, j, k] = values[count]
+                    count += 1
+            else:
+                print("wrong array size")
+        else:
+            print("wrong index")
 
 # Пример использования:
+array3d = Array3d(2, 3, 4)
 
-arr = Array3d(3, 4, 2)
-arr[0, 1, 1] = 5
-print(f"arr[0, 1, 1]: {arr[0, 1, 1]}")
+count = 0
+for i in range(2):
+    for j in range(3):
+        for k in range(4):
+            array3d[i, j, k] = count
+            count += 1
+# Вывод всего массива
+array3d.print_array()
 
-values0 = arr.get_values_0(1)
-print(f"values0: {values0}")
-
-values1 = arr.get_values_1(2)
-print(f"values1: {values1}")
-
-values2 = arr.get_values_2(0)
-print(f"values2: {values2}")
-
-values01 = arr.get_values_01(0, 1)
-print(f"values01: {values01}")
-
-values02 = arr.get_values_02(0, 0)
-print(f"values02: {values02}")
-
-values12 = arr.get_values_12(1, 1)
-print(f"values12: {values12}")
-
-arr.set_values_0(1, [1, 2, 3, 4, 5, 6, 7, 8])
-print(f"arr[1, 0, 0]: {arr[1, 0, 0]}")
-print(f"arr[1, 1, 1]: {arr[1, 1, 1]}")
-
-array_same_elements = Array3d.create_array_with_same_elements(2, 3, 4, 0.5)
-print(f"same elements array:\n{array_same_elements}")
+print(array3d.get_values_0(0))
+print(array3d.get_values_0(1))
+print(array3d.get_values_1(0))
+print(array3d.get_values_1(1))
+print(array3d.get_values_1(2))
+print(array3d.get_values_2(0))
+print(array3d.get_values_2(1))
+print(array3d.get_values_2(2))
+print(array3d.get_values_2(3))
+print(array3d.get_values_01(0, 0))
+print(array3d.get_values_02(0, 0))
+print(array3d.get_values_12(0, 0))
+arr_0=[66+i for i in range(12)]
+array3d.set_values_0(0, arr_0)
+print(array3d.get_values_0(0))
+arr_12=[13, 37]
+array3d.set_values_12(0, 0, arr_12)
+print(array3d.get_values_12(0, 0))
+wrong_array = [0 for i in range(100)]
+array3d.set_values_12(0, 0, wrong_array)
+array3d.fill(1337)
+array3d.print_array()
+array3d.zeroes()
+array3d.print_array()
