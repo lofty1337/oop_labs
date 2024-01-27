@@ -1,9 +1,21 @@
 class Array3d:
     def __init__(self, dim0, dim1, dim2, default_value=0):
-        self.dim0 = dim0
-        self.dim1 = dim1
-        self.dim2 = dim2
+        self._dim0 = dim0
+        self._dim1 = dim1
+        self._dim2 = dim2
         self.array = [default_value] * (dim0 * dim1 * dim2)
+
+    @property
+    def dim0(self):
+        return self._dim0
+
+    @property
+    def dim1(self):
+        return self._dim1
+
+    @property
+    def dim2(self):
+        return self._dim2
 
     def get_index(self, i, j, k):
         return i * (self.dim1 * self.dim2) + j * self.dim2 + k
